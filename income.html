@@ -14,8 +14,8 @@
         </div>
         <div>
             <label for="WeeklyHours">Hours per week</label>
-            <input id="WeeklyHours" type="range" min="0" max="168" step="0.25" value="40" />
-            <span id="WeeklyHoursValue">35</span>
+            <input id="WeeklyHours" type="range" min="0" max="168" step="0.25" value="35" />
+            <span id="WeeklyHoursValue">35.00</span>
         </div>
         <div>
             <label for="MonthlyGross">Monthly Gross</label>
@@ -27,61 +27,71 @@
         </div>
         
         <script>
-            const errorNode = getNode("Error");
-            const yearlyGrossNode = getNode("YearlyGross")
-            const monthlyGrossNode = getNode("MonthlyGross")
-            const hourlyGrossNode = getNode("HourlyGross")
+            let lastSelectedInputId = "";
 
             getNode("WeeklyHours").addEventListener('input', (node) => {
-                setElementInnerHtmlById("WeeklyHoursValue", node.target.value)
-                calculateHourly();
+                setElementInnerHtmlById("WeeklyHoursValue", Number.parseFloat(node.target.value).toFixed(2))
+                switch (lastSelectedInputId) {
+                    case "HourlyGross":
+                        calculateHourly()
+                        break
+                    case "MonthlyGross":
+                        calculateMonthly()
+                        break
+                    case "YearlyGross":
+                        calculateYearly()
+                        break
+                    default:
+                        calculateHourly()
+                }
             })
             
             getNode("HourlyGross").addEventListener('input', (node) => {
+                lastSelectedInputId = node.target.id
                 validateNodeIsNumber(node, calculateHourly, resetForm);
             })
-
+            
             getNode("MonthlyGross").addEventListener('input', (node) => {
+                lastSelectedInputId = node.target.id
                 validateNodeIsNumber(node, calculateMonthly, resetForm);
             })
-
+            
             getNode("YearlyGross").addEventListener('input', (node) => {
+                lastSelectedInputId = node.target.id
                 validateNodeIsNumber(node, calculateYearly, resetForm);
             })
 
-
-
             const calculateYearly = function() {
-                let yearlyGross = getFloatFromElementId("YearlyGross")
-                let weeklyHours = getFloatFromElementId("WeeklyHours")
+                let weeklyHours = getInnerHtmlFromElementId("WeeklyHoursValue")
+                let yearlyGross = getCurrencyFromElementId("YearlyGross")
 
                 let monthlyGross = yearlyGross / 12
                 let hourlyGross = (yearlyGross / 52) / weeklyHours
-
-                setElementValueById("MonthlyGross", monthlyGross)
-                setElementValueById("HourlyGross", hourlyGross)
+                
+                setElementValueById("MonthlyGross", convertToDecimal(monthlyGross))
+                setElementValueById("HourlyGross", convertToDecimal(hourlyGross))
             }
 
             const calculateMonthly = function() {
-                let monthlyGross = getFloatFromElementId("MonthlyGross")
-                let weeklyHours = getFloatFromElementId("WeeklyHours")
+                let weeklyHours = getInnerHtmlFromElementId("WeeklyHoursValue")
+                let monthlyGross = getCurrencyFromElementId("MonthlyGross")
 
                 let yearlyGross = monthlyGross * 12
                 let hourlyGross = (yearlyGross / 52) / weeklyHours
 
-                setElementValueById("YearlyGross", yearlyGross)
-                setElementValueById("HourlyGross", hourlyGross)
+                setElementValueById("YearlyGross", convertToDecimal(yearlyGross))
+                setElementValueById("HourlyGross", convertToDecimal(hourlyGross))
             }
 
             const calculateHourly = function() {
-                let weeklyHours = getFloatFromElementId("WeeklyHours");
-                let hourlyRate = getFloatFromElementId("HourlyGross");
+                let weeklyHours = getInnerHtmlFromElementId("WeeklyHoursValue");
+                let hourlyGross = getCurrencyFromElementId("HourlyGross");
 
-                let yearlyGross = (weeklyHours * hourlyRate) * 52;
+                let yearlyGross = (weeklyHours * hourlyGross) * 52;
                 let monthlyGross = yearlyGross / 12;
-
-                setElementValueById("MonthlyGross", monthlyGross)
-                setElementValueById("YearlyGross", yearlyGross)
+                
+                setElementValueById("MonthlyGross", convertToDecimal(monthlyGross))
+                setElementValueById("YearlyGross", convertToDecimal(yearlyGross))
             }
 
             const resetForm = function() {
