@@ -6,47 +6,48 @@
     </head>
     <body>
         <div>
-            <span id="Error"></span>
-        </div>
-        <div>
             <label for="HandsetRRP">Handset RRP</label>
-            <input id="HandsetRRP" type="text", value="0" />
+            <input id="HandsetRRP" type="text" value="0.00" />
         </div>
         <div>
-            <label for="ContractLength">Contract Length <span id="ContractLengthValue">0</span></label>
+            <label for="ContractLength">Contract Length</label>
             <input id="ContractLength" type="range" min="0" max="36" step="6" value="0" />
+            <span id="ContractLengthValue">0</span>
         </div>
         <div>
-            <label for="ContractMonthly">Contract Monthly Price</label>
-            <input id="ContractMonthly" type="text", value="0" />
+            <label for="ContractMonthly">Contract Monthly Cost</label>
+            <input id="ContractMonthly" type="text" value="0.00" />
         </div>
         <div>
-            <label for="HandsetUpFront">Handset Upfront (optional)</label>
-            <input id="HandsetUpFront" type="text", value="0" />
+            <label for="HandsetUpFront">Upfront (optional)</label>
+            <input id="HandsetUpFront" type="text" value="0.00" />
         </div>
         <hr>
+        <h3>Totals for length</h3>
         <div>
-            <label for="HandsetTotal">Handset Total</label>
-            <input id="HandsetTotal" type="text" value="0" readonly />
+            <label for="ContractTotal">Contract</label>
+            <input id="ContractTotal" type="text" value="0.00" readonly />
+        </div>
+        <br>
+        <div>
+            <label for="HandsetTotal">Handset</label>
+            <input id="HandsetTotal" type="text" value="0.00" readonly />
         </div>
         <div>
-            <label for="ContractTotal">Contract Total</label>
-            <input id="ContractTotal" type="text" value="0" readonly />
+            <label for="PlanTotal">Plan</label>
+            <input id="PlanTotal" type="text" value="0.00" readonly />
+        </div>
+        <hr>
+        <h3>Totals per month</h3>
+        <div>
+            <label for="HandsetMonthly">Handset</label>
+            <input id="HandsetMonthly" type="text" value="0.00" readonly />
         </div>
         <div>
-            <label for="PlanTotal">Plan Total (minus handset total)</label>
-            <input id="PlanTotal" type="text" value="0" readonly />
-        </div>
-        <div>
-            <label for="HandsetMonthly">Handset Monthly</label>
-            <input id="HandsetMonthly" type="text" value="0" readonly />
-        </div>
-        <div>
-            <label for="PlanMonthly">Plan Monthly</label>
-            <input id="PlanMonthly" type="text" value="0" readonly />
+            <label for="PlanMonthly">Plan</label>
+            <input id="PlanMonthly" type="text" value="0.00" readonly />
         </div>
         <script>
-            
             document.getElementById("ContractLength").addEventListener('input', (node) => {
                 setElementInnerHtmlById('ContractLengthValue', node.target.value)
                 calculateResult();
@@ -65,10 +66,10 @@
             })
 
             const calculateResult = function() {
-                let handsetRRP = getFloatFromElementId("HandsetRRP")
+                let handsetRRP = getCurrencyFromElementId("HandsetRRP")
                 let contractLength = getIntFromElementId("ContractLength")
-                let contractMonthlyCost = getFloatFromElementId("ContractMonthly")
-                let handsetUpFront = getFloatFromElementId("HandsetUpFront")
+                let contractMonthlyCost = getCurrencyFromElementId("ContractMonthly")
+                let handsetUpFront = getCurrencyFromElementId("HandsetUpFront")
 
                 let handsetTotal = handsetRRP - handsetUpFront
                 let contractTotal = contractLength * contractMonthlyCost;
@@ -76,13 +77,12 @@
                 let planMonthly = planTotal / contractLength;
                 let handsetMonthly = handsetTotal / contractLength;
 
-                setElementValueById("HandsetTotal", handsetTotal.toFixed(2))
-                setElementValueById("ContractTotal", contractTotal.toFixed(2))
-                setElementValueById("PlanTotal", planTotal.toFixed(2))
-                setElementValueById("PlanMonthly", planMonthly.toFixed(2))
-                setElementValueById("HandsetMonthly", handsetMonthly.toFixed(2))
+                setElementValueById("HandsetTotal", convertToDecimal(handsetTotal))
+                setElementValueById("ContractTotal", convertToDecimal(contractTotal))
+                setElementValueById("PlanTotal", convertToDecimal(planTotal))
+                setElementValueById("PlanMonthly", convertToDecimal(planMonthly))
+                setElementValueById("HandsetMonthly", convertToDecimal(handsetMonthly))
             }
-            
         </script>
     </body>
 </html>
