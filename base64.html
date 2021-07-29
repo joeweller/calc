@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>base64 converter</title>
+        <script src="scripts/util.js"></script>
+    </head>
+    <body>
+        <div>
+            <span>Ascii</span>
+            <br>
+            <textarea id="AsciiText"></textarea>
+        </div>
+        <hr>
+        <div>
+            <span>Base64</span>
+            <br>
+            <textarea id="Base64Text"></textarea>
+        </div>
+        
+        <script>
+            getNode("AsciiText").addEventListener('input', (node) => {
+                setElementValueById("Base64Text", btoa(node.target.value))
+            })
+            
+            getNode("Base64Text").addEventListener('input', (node) => {
+                setElementValueById("AsciiText", atob(node.target.value))
+            })
+        </script>
+    </body>
+</html>
