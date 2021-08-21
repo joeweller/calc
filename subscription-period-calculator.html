@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Subscription Period Calculator</title>
+        <script src="scripts/util.js"></script>
+    </head>
+    <body>
+        <span>Subscription Period Calculator</span>
+        <div>
+            <label for="YearlyForPeriod">Yearly for Period</label>
+            <input id="YearlyForPeriod" type="text" value="0.00" readonly/>
+        </div>
+        <div>
+            <label for="Years">Years Length</label>
+            <input id="Years" type="range" min="1" max="10" step="1" value="1" />
+            <span id="YearsValue">1</span>
+        </div>
+        <hr>
+        <div>
+            <label for="Yearly">Yearly</label>
+            <input id="Yearly" type="text" value="0.00" />
+        </div>
+        <div>
+            <label for="Quarterly">Quarterly</label>
+            <input id="Quarterly" type="text" value="0.00" />
+        </div>
+        <div>
+            <label for="Monthly">Monthly</label>
+            <input id="Monthly" type="text" value="0.00" />
+        </div>
+        <div>
+            <label for="Weekly">Weekly</label>
+            <input id="Weekly" type="text" value="0.00" />
+        </div>
+        <div>
+            <label for="Daily">Daily</label>
+            <input id="Daily" type="text" value="0.00" />
+        </div>
+        <script>
+            document.getElementById("Years").addEventListener('input', (node) => {
+                setElementInnerHtmlById('YearsValue', node.target.value)
+                calculateResult("Yearly");
+            })
+            
+            document.getElementById("Yearly").addEventListener('input', () => {
+                calculateResult("Yearly");
+            })
+            
+            document.getElementById("Quarterly").addEventListener('input', () => {
+                calculateResult("Quarterly");
+            })
+
+            document.getElementById("Monthly").addEventListener('input', () => {
+                calculateResult("Monthly");
+            })
+            
+            document.getElementById("Weekly").addEventListener('input', () => {
+                calculateResult("Weekly");
+            })
+            
+            document.getElementById("Daily").addEventListener('input', () => {
+                calculateResult("Daily");
+            })
+
+            const calculateResult = function(lastInput) {
+                let values = fetchValues()
+                
+                switch(lastInput) {
+                    
+                    case "Yearly":
+                        values.Quarterly = values.Yearly / 4
+                        values.Monthly = values.Yearly / 12
+                        values.Weekly = values.Yearly / 52.1428571
+                        values.Daily = values.Weekly / 7
+                        break;
+                        
+                    case "Quarterly":
+                        values.Yearly = values.Quarterly * 4
+                        values.Monthly = values.Yearly / 12
+                        values.Weekly = values.Yearly / 52.1428571
+                        values.Daily = values.Weekly / 7
+                        break;
+                        
+                    case "Monthly":
+                        values.Yearly = values.Monthly * 12
+                        values.Quarterly = values.Monthly * 3
+                        values.Weekly = values.Yearly / 52.1428571
+                        values.Daily = values.Weekly / 7
+                        break;
+                    
+                    case "Weekly":
+                        values.Yearly = values.Weekly * 52.1428571
+                        values.Quarterly = values.Yearly / 4
+                        values.Monthly = values.Yearly / 12
+                        values.Daily = values.Weekly / 7
+                        break;
+                    
+                    case "Daily":
+                        values.Weekly = values.Daily * 7
+                        values.Yearly = values.Weekly * 52.1428571
+                        values.Monthly = values.Yearly / 12
+                        values.Quarterly = values.Monthly * 3
+                        break;
+                }
+
+                updateValues(lastInput, values)
+            }
+
+            const fetchValues = function() {
+                return {
+                    Years: getIntFromElementId("Years"),
+                    Yearly: getCurrencyFromElementId("Yearly"),
+                    Quarterly: getCurrencyFromElementId("Quarterly"),
+                    Monthly: getCurrencyFromElementId("Monthly"),
+                    Weekly: getCurrencyFromElementId("Weekly"),
+                    Daily: getCurrencyFromElementId("Daily")
+                }
+            }
+            
+            const updateValues = function(ignoreElement, values) {
+                setElementValueById("YearlyForPeriod", convertToDecimal(values.Yearly * values.Years))
+                if (ignoreElement !== "Yearly")  setElementValueById("Yearly", convertToDecimal(values.Yearly))
+                if (ignoreElement !== "Quarterly") setElementValueById("Quarterly", convertToDecimal(values.Quarterly))
+                if (ignoreElement !== "Monthly") setElementValueById("Monthly", convertToDecimal(values.Monthly))
+                if (ignoreElement !== "Weekly")  setElementValueById("Weekly", convertToDecimal(values.Weekly))
+                if (ignoreElement !== "Daily")   setElementValueById("Daily", convertToDecimal(values.Daily))
+            }
+        </script>
+    </body>
+</html>
